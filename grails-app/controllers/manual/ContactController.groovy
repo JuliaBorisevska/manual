@@ -64,6 +64,12 @@ class ContactController {
             respond contactInstance.errors, view:'edit'
             return
         }
+        for (Object key : params.keySet()){
+            println("param: "+key)
+            println(params.get(key))
+        }
+        println("edit link: "+params.get("edit"));
+        println("controller: "+params.get("controller"));
 
         contactInstance.save flush:true
 

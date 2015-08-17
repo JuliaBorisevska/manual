@@ -15,6 +15,12 @@
         <g:each in="${contactInstance?.phones}" status="i" var="phoneInstance">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                 <td>
+                    <g:hiddenField name='phones-${i}-id' value='${phoneInstance?.id}'/>
+                    <g:hiddenField name='phones-${i}-countryCode' value='${phoneInstance?.countryCode}'/>
+                    <g:hiddenField name='phones-${i}-operatorCode' value='${phoneInstance?.operatorCode}'/>
+                    <g:hiddenField name='phones-${i}-basicNumber' value='${phoneInstance?.basicNumber}'/>
+                    <g:hiddenField name='phones-${i}-phoneType' value='${phoneInstance?.phoneType}'/>
+                    <g:hiddenField name='phones-${i}-userComment' value='${phoneInstance?.userComment}'/>
                     <g:if test="${actionName=='edit'}">
                         <a name="edit" class="popup-link-1" href="">
                             +${fieldValue(bean: phoneInstance, field: "countryCode")} (${fieldValue(bean: phoneInstance, field: "operatorCode")}) ${fieldValue(bean: phoneInstance, field: "basicNumber")}

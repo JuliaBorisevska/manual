@@ -6,6 +6,7 @@
     <div class="bottom">
 
         <input type="hidden" id="phoneOperation" value="" >
+        <input type="hidden" id="index" value="" >
 
         <div class="fieldcontain required">
             <label for="countryCode">

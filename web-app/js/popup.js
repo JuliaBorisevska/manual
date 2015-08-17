@@ -30,9 +30,15 @@ $(document).ready(function() {
     $(window).scroll(centerBox);
     centerBox();
 
-
-    $('[class*=popup-link]').click(function(e) {
+    $('.form').on('click', '[class*=popup-link]', function(e) {
         /* Предотвращаем действия по умолчанию */
+        //console.log($(this).parent().parent().index());
+        var index = $(this).parent().parent().index();
+        $('#index').val(index);
+        //console.log($(this).parent()[0].tagName);
+        //console.log($(this).parent().children('[id$=id]')[0].value);
+        //console.log($(this).parent().children('[id$=countryCode]')[0].value);
+        //console.log($(this).parent().children('#phones-0-operatorCode')[0].value);
         e.preventDefault();
         e.stopPropagation();
         /* Получаем id (последний номер в имени класса ссылки) */
@@ -48,6 +54,16 @@ $(document).ready(function() {
 
         if (id=="1"){
             $('#phoneOperation').val(e.target.name);
+            if (e.target.name=="edit"){
+                setFields(
+                    $(this).parent().children('#phones-'+index+'-countryCode')[0].value,
+                    $(this).parent().children('#phones-'+index+'-operatorCode')[0].value,
+                    $(this).parent().children('[id$=basicNumber]')[0].value,
+                    $(this).parent().children('[id$=userComment]')[0].value,
+                    $(this).parent().children('[id$=phoneType]')[0].value
+                );
+            }
+
         }
         if (id=="2"){
             $('#attachOperation').val(e.target.name);
@@ -56,7 +72,7 @@ $(document).ready(function() {
     });
 
     $('[class*=popup-box]').click(function(e) {
-        /* Предотвращаем работу ссылки, если она являеться нашим popup окном */
+        /* Предотвращаем работу ссылки, если она являеться popup окном */
         e.stopPropagation();
     });
 //    $('html').click(function() {
@@ -74,6 +90,7 @@ $(document).ready(function() {
         $('#blackout').hide();
         $("html,body").css("overflow","auto");
         $('html').scrollTop(scrollPos);
+        setFields("","","","");
     });
 
     $('#phone-save-btn').click(function(e) {
@@ -83,6 +100,8 @@ $(document).ready(function() {
         $("html,body").css("overflow","auto");
         $('html').scrollTop(scrollPos);
 
+        var index=parseInt($('#index').val())+1;
+        console.log(index);
         var operation=$('#phoneOperation').val();
         var country=$('#countryCode').val();
         var operator=$('#operatorCode').val();
@@ -104,8 +123,34 @@ $(document).ready(function() {
             $("#phone-table tr:last").append("<td>"+type+"</td>");
             $("#phone-table tr:last").append("<td>"+comment+"</td>");
         }
+        if (operation=="edit"){
+            $("#phone-table tr:eq("+index+") td:eq(0) a").text(country+' ('+operator+') '+number);
+            $("#phone-table tr:eq("+index+") td:eq(1)").text(type);
+            $("#phone-table tr:eq("+index+") td:eq(2)").text(comment);
+            setPhoneHiddenInputs($('#index').val(), country, operator, number, type, comment);
 
-
+        }
+        setFields("","","","");
 
     });
+
+    function setPhoneHiddenInputs(index, country, operator, number, type, comment){
+        $('#phones-'+index+'-countryCode').val(country);
+        $('#phones-'+index+'-operatorCode').val(operator);
+        $('#phones-'+index+'-basicNumber').val(number);
+        $('#phones-'+index+'-userComment').val(comment);
+        $('#phones-'+index+'-phoneType').val(type);
+    }
+
+    function setFields(country, operator, number, comment, type) {
+
+        $('#countryCode').val(country);
+        $('#operatorCode').val(operator);
+        $('#basicNumber').val(number);
+        $('#userComment').val(comment);
+        if (type){
+            $('#phoneType').val(type);
+        }
+    }
+
 });
