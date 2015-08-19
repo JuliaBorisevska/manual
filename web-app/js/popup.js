@@ -6,7 +6,6 @@ $(document).ready(function() {
 
     function centerBox() {
 
-        /* определяем нужные данные */
         var winWidth = $(window).width();
         if (winWidth<boxWidth){
             boxWidth=winWidth-20;
@@ -14,12 +13,9 @@ $(document).ready(function() {
         var winHeight = $(document).height();
         var scrollPos = $(window).scrollTop();
 
-        /* Вычисляем позицию */
-
         var disWidth = (winWidth - boxWidth) / 2
         var disHeight = scrollPos + 150;
 
-        /* Добавляем стили к блокам */
         $('.popup-box').css({'width' : boxWidth+'px', 'left' : disWidth+'px', 'top' : disHeight+'px'});
         $('#blackout').css({'width' : winWidth+'px', 'height' : winHeight+'px'});
 
@@ -31,17 +27,10 @@ $(document).ready(function() {
     centerBox();
 
     $('.form').on('click', '[class*=popup-link]', function(e) {
-        /* Предотвращаем действия по умолчанию */
-        //console.log($(this).parent().parent().index());
-        var index = $(this).parent().parent().index();
-        $('#index').val(index);
-        //console.log($(this).parent()[0].tagName);
-        //console.log($(this).parent().children('[id$=id]')[0].value);
-        //console.log($(this).parent().children('[id$=countryCode]')[0].value);
-        //console.log($(this).parent().children('#phones-0-operatorCode')[0].value);
+
         e.preventDefault();
         e.stopPropagation();
-        /* Получаем id (последний номер в имени класса ссылки) */
+
         var name = $(this).attr('class');
         var id = name[name.length - 1];
         var scrollPos = $(window).scrollTop();
@@ -55,9 +44,13 @@ $(document).ready(function() {
         if (id=="1"){
             $('#phoneOperation').val(e.target.name);
             if (e.target.name=="edit"){
+                $('#phoneRowNumber').val($(this).parent().parent().index());
+                //var index = $(this).parent().parent().index();
+                var index=$(this).parent().children('[name="index"]')[0].value;
+                $('#phoneIndex').val(index);
                 setFields(
-                    $(this).parent().children('#phones-'+index+'-countryCode')[0].value,
-                    $(this).parent().children('#phones-'+index+'-operatorCode')[0].value,
+                    $(this).parent().children('[id$=countryCode]')[0].value,
+                    $(this).parent().children('[id$=operatorCode]')[0].value,
                     $(this).parent().children('[id$=basicNumber]')[0].value,
                     $(this).parent().children('[id$=userComment]')[0].value,
                     $(this).parent().children('[id$=phoneType]')[0].value
@@ -100,39 +93,67 @@ $(document).ready(function() {
         $("html,body").css("overflow","auto");
         $('html').scrollTop(scrollPos);
 
-        var index=parseInt($('#index').val())+1;
-        console.log(index);
+        var index;
         var operation=$('#phoneOperation').val();
         var country=$('#countryCode').val();
         var operator=$('#operatorCode').val();
         var number=$('#basicNumber').val();
         var type=$('#phoneType').val();
         var comment=$('#userComment').val();
-
         if (operation=="add"){
             $("#phone-table").append("<tr></tr>");
-            var rowCount = $('#phone-table tr').length;
-            if (rowCount%2==0){
-                $("#phone-table tr:last").addClass("even");
-            }else{
-                $("#phone-table tr:last").addClass("odd");
-            }
-            //$("#phone-table tr:last").append("<td>+"+country+" ("+operator+") "+number+"</td><td>"+type+"</td><td>"+comment+"</td>");
+            index = $('#phones-length').val();
             $("#phone-table tr:last").append("<td></td>");
-            $("#phone-table tr:last td").append('<a name="edit" class="popup-link-1" href="">+'+country+' ('+operator+') '+number+'</a>');
-            $("#phone-table tr:last").append("<td>"+type+"</td>");
-            $("#phone-table tr:last").append("<td>"+comment+"</td>");
+            $("#phone-table tr:last td")
+                .append('<input type="hidden" name="index" value="'+index+'">')
+                .append('<input type="hidden" id="phones-'+index+'-deleted" name="phones['+index+'].deleted" value="false">')
+                .append('<input type="hidden" id="phones-'+index+'-countryCode" name="phones['+index+'].countryCode" value="'+country+'">')
+                .append('<input type="hidden" id="phones-'+index+'-operatorCode" name="phones['+index+'].operatorCode" value="'+operator+'">')
+                .append('<input type="hidden" id="phones-'+index+'-basicNumber" name="phones['+index+'].basicNumber" value="'+number+'">')
+                .append('<input type="hidden" id="phones-'+index+'-userComment" name="phones['+index+'].userComment" value="'+comment+'">')
+                .append('<input type="hidden" id="phones-'+index+'-phoneType" name="phones['+index+'].phoneType" value="'+type+'">')
+                .append('<a name="edit" class="popup-link-1" href="">+'+country+' ('+operator+') '+number+'</a>');
+            $("#phone-table tr:last")
+                .append("<td>"+type+"</td>")
+                .append("<td>"+comment+"</td>")
+                .append('<td><input type="button" name="phoneDelete" value="Удалить" id="phone-delete-btn" /></td>');
+            //$("#phone-table tr:last td").append('<input type="button" name="phoneDelete" value="Удалить" id="phone-delete-btn" />');
+            $('#phones-length').val(parseInt(index)+1);
         }
         if (operation=="edit"){
-            $("#phone-table tr:eq("+index+") td:eq(0) a").text(country+' ('+operator+') '+number);
-            $("#phone-table tr:eq("+index+") td:eq(1)").text(type);
-            $("#phone-table tr:eq("+index+") td:eq(2)").text(comment);
-            setPhoneHiddenInputs($('#index').val(), country, operator, number, type, comment);
+            index=$('#phoneIndex').val();
+            var rowNumber = parseInt($('#phoneRowNumber').val())+1;
+            $("#phone-table tr:eq("+rowNumber+") td:eq(0) a").text(country+' ('+operator+') '+number);
+            $("#phone-table tr:eq("+rowNumber+") td:eq(1)").text(type);
+            $("#phone-table tr:eq("+rowNumber+") td:eq(2)").text(comment);
+
+            setPhoneHiddenInputs(index, country, operator, number, type, comment);
 
         }
         setFields("","","","");
 
     });
+
+    $('.form').on('click', '#phone-delete-btn', function(e) {
+        //var index = $(this).parent().parent().index();
+        var index=$(this).parent().parent().find('[name="index"]')[0].value;
+        $('#phones-'+index+'-deleted').val("true");
+        movePhoneHiddenInputs(index);
+        $(this).parent().parent().remove();
+
+    });
+
+    function movePhoneHiddenInputs(index){
+        if ($('#phones-'+index+'-id')){
+            $('#phones-'+index+'-id').insertBefore("#phone-table");
+        }
+        $('#phones-'+index+'-deleted').insertBefore("#phone-table");
+        $('#phones-'+index+'-countryCode').insertBefore("#phone-table");
+        $('#phones-'+index+'-operatorCode').insertBefore("#phone-table");
+        $('#phones-'+index+'-basicNumber').insertBefore("#phone-table");
+        $('#phones-'+index+'-userComment').insertBefore("#phone-table");
+        $('#phones-'+index+'-phoneType').insertBefore("#phone-table");
+    }
 
     function setPhoneHiddenInputs(index, country, operator, number, type, comment){
         $('#phones-'+index+'-countryCode').val(country);

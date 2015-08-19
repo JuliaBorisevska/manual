@@ -6,7 +6,8 @@
     <div class="bottom">
 
         <input type="hidden" id="phoneOperation" value="" >
-        <input type="hidden" id="index" value="" >
+        <input type="hidden" id="phoneIndex" value="" >
+        <input type="hidden" id="phoneRowNumber" value="" >
 
         <div class="fieldcontain required">
             <label for="countryCode">

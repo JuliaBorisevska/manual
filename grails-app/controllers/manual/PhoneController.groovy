@@ -25,6 +25,7 @@ class PhoneController {
 
     @Transactional
     def save(Phone phoneInstance) {
+        println("perform phone save")
         if (phoneInstance == null) {
             notFound()
             return
@@ -33,6 +34,11 @@ class PhoneController {
         if (phoneInstance.hasErrors()) {
             respond phoneInstance.errors, view:'create'
             return
+        }
+
+        for (Object key : params.keySet()){
+            print("param: "+key)
+            println(" - value:"+params.get(key))
         }
 
         phoneInstance.save flush:true

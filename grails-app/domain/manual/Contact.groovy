@@ -20,6 +20,11 @@ class Contact {
 
     static hasMany = [phones: Phone, attachments: Attachment]
 
+    static mapping = {
+        phones cascade:"all-delete-orphan"
+        attachments cascade: "all-delete-orphan"
+    }
+
     static constraints = {
         lastName(nullable: false, blank: false, maxSize: 30)
         firstName(nullable: false, blank: false, maxSize: 30)

@@ -64,12 +64,25 @@ class ContactController {
             respond contactInstance.errors, view:'edit'
             return
         }
-        for (Object key : params.keySet()){
-            println("param: "+key)
-            println(params.get(key))
+
+//        for (Object key : params.keySet()){
+//            println("contact:")
+//            println("param: "+key)
+//            println(params.get(key))
+//        }
+//
+//        for (Phone ph : contactInstance.phones){
+//            println("phone:")
+//            println(ph?.id)
+//            println(ph?.deleted)
+//        }
+
+        def toBeDeleted = contactInstance.phones.findAll {it?.deleted}
+        //println("deletions amount: "+toBeDeleted.size())
+        if (toBeDeleted) {
+            //println("some deletions")
+            contactInstance.phones.removeAll(toBeDeleted)
         }
-        println("edit link: "+params.get("edit"));
-        println("controller: "+params.get("controller"));
 
         contactInstance.save flush:true
 

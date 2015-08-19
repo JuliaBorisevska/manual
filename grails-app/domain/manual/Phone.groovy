@@ -7,6 +7,8 @@ class Phone {
     Long basicNumber
     String phoneType
     String userComment
+    boolean deleted
+    static transients = [ 'deleted' ]
 
     static belongsTo = [contact: Contact]
 
@@ -16,6 +18,6 @@ class Phone {
         basicNumber(matches: "^\\d{5,7}\$")
         phoneType(inList: ["мобильный","домашний","рабочий"])
         userComment(nullable: true, widget: 'textarea')
-
+        deleted(bindable: true)
     }
 }
