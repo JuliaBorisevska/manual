@@ -6,6 +6,8 @@
     <div class="bottom">
 
         <input type="hidden" id="attachOperation" value="" >
+        <input type="hidden" id="attachIndex" value="" >
+        <input type="hidden" id="attachRowNumber" value="" >
 
         <div class="fieldcontain required">
             <label for="title">
@@ -21,7 +23,7 @@
                 <g:message code="attachment.userComment.label" default="User Comment" />
 
             </label>
-            <g:textArea name="userComment" cols="40" rows="5" value=""/>
+            <g:textArea name="userComment" id="attach-userComment" cols="40" rows="5" value=""/>
 
         </div>
 
@@ -33,6 +35,8 @@
             <g:textField name="path" required="" value=""/>
 
         </div>
+
+        <input type="button" name="save" value="<g:message code="button.save.label" default="Save" />" id="attach-save-btn" />
 
     </div>
 </div>

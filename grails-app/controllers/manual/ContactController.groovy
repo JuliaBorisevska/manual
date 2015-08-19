@@ -55,9 +55,14 @@ class ContactController {
 
     @Transactional
     def update(Contact contactInstance) {
+        println("START UPDATE")
         if (contactInstance == null) {
             notFound()
             return
+        }
+
+        if (!contactInstance.validate()) {
+            println("VALIDATION ERROR")
         }
 
         if (contactInstance.hasErrors()) {
@@ -65,17 +70,24 @@ class ContactController {
             return
         }
 
-//        for (Object key : params.keySet()){
-//            println("contact:")
-//            println("param: "+key)
-//            println(params.get(key))
-//        }
-//
-//        for (Phone ph : contactInstance.phones){
-//            println("phone:")
-//            println(ph?.id)
-//            println(ph?.deleted)
-//        }
+        for (Object key : params.keySet()){
+            println("contact:")
+            println("param: "+key)
+            println(params.get(key))
+        }
+
+        for (Phone ph : contactInstance.phones){
+            println("phone:")
+            println(ph?.id)
+            println(ph?.deleted)
+        }
+
+        for (Attachment attach : contactInstance.attachments){
+            println("attachment:")
+            println(attach?.id)
+            println(attach?.deleted)
+            println(attach?.title)
+        }
 
         def toBeDeleted = contactInstance.phones.findAll {it?.deleted}
         //println("deletions amount: "+toBeDeleted.size())
